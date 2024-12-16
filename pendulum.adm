@@ -1,0 +1,188 @@
+Adams View model name: pendulum
+!
+!-------------------------------- SYSTEM UNITS ---------------------------------
+!
+UNITS/
+, FORCE = NEWTON
+, MASS = KILOGRAM
+, LENGTH = MILLIMETER
+, TIME = SECOND
+!
+!----------------------------------- PARTS -------------------------------------
+!
+!----------------------------------- Ground ------------------------------------
+!
+!                            adams_view_name='ground'
+PART/1
+, GROUND
+!
+!                           adams_view_name='MARKER_5'
+MARKER/5
+, PART = 1
+, REULER = 90D, 90D, 0D
+!
+!                           adams_view_name='MARKER_9'
+MARKER/9
+, PART = 1
+, REULER = 90D, 90D, 0D
+!
+!                          adams_view_name='MARKER_13'
+MARKER/13
+, PART = 1
+!
+!------------------------------------ Part -------------------------------------
+!
+!                            adams_view_name='PART_2'
+PART/2
+, MASS = 0.042018302
+, CM = 10
+, IP = 41.03368968, 40.77766026, 0.4311056795
+!
+!                           adams_view_name='MARKER_1'
+MARKER/1
+, PART = 2
+, REULER = 90D, 90D, 270D
+!
+!                           adams_view_name='MARKER_2'
+MARKER/2
+, PART = 2
+, QP = 0, 0, -100
+, REULER = 90D, 90D, 270D
+!
+!                           adams_view_name='MARKER_4'
+MARKER/4
+, PART = 2
+, REULER = 90D, 90D, 0D
+!
+!                           adams_view_name='MARKER_7'
+MARKER/7
+, PART = 2
+, QP = 0, 0, -100
+!
+!                           adams_view_name='MARKER_8'
+MARKER/8
+, PART = 2
+, REULER = 90D, 90D, 0D
+!
+!                              adams_view_name='cm'
+MARKER/10
+, PART = 2
+, QP = 0, 0, -50
+!
+!                          adams_view_name='MARKER_12'
+MARKER/12
+, PART = 2
+!
+!------------------------------------ Part -------------------------------------
+!
+!                            adams_view_name='PART_3'
+PART/3
+, MASS = 0.2614140191
+, CM = 11
+, IP = 41.82624306, 41.82624306, 41.82624306
+!
+!                           adams_view_name='MARKER_3'
+MARKER/3
+, PART = 3
+, QP = 0, 0, -100
+!
+!                           adams_view_name='MARKER_6'
+MARKER/6
+, PART = 3
+, QP = 0, 0, -100
+!
+!                              adams_view_name='cm'
+MARKER/11
+, PART = 3
+, QP = 0, 0, -100
+, REULER = 270D, 90D, 90D
+!
+!                         adams_view_name='ELLIPSOID_4'
+GRAPHICS/2
+, ELLIPSOID
+, CM = 3
+, XSCALE = 40
+, YSCALE = 40
+, ZSCALE = 40
+!
+!------------------------------ DYNAMIC GRAPHICS -------------------------------
+!
+!                   adams_view_name='SFORCE_1_force_graphic_1'
+GRAPHICS/1
+, FORCE
+, ETYPE = SFORCE
+, EID = 1
+, EMARKER = 8
+!
+!-------------------------------- CONSTRAINTS ----------------------------------
+!
+!                           adams_view_name='JOINT_1'
+JOINT/1
+, REVOLUTE
+, I = 4
+, J = 5
+!
+!                           adams_view_name='JOINT_2'
+JOINT/2
+, FIXED
+, I = 6
+, J = 7
+!
+!----------------------------------- FORCES ------------------------------------
+!
+!                           adams_view_name='SFORCE_1'
+SFORCE/1
+, ROTATIONAL
+, I = 8
+, J = 9
+, ACTIONONLY
+, FUNCTION = VARVAL(3)
+!
+!------------------------------ DATA STRUCTURES --------------------------------
+!
+!                        adams_view_name='FUNCTION_MEA_1'
+VARIABLE/1
+, FUNCTION = AX( 12, 13)
+!
+!                            adams_view_name='ANGLE'
+VARIABLE/2
+, IC = 0
+, FUNCTION = varval(1)
+!
+!                            adams_view_name='TORQUE'
+VARIABLE/3
+, IC = 0
+, FUNCTION = 0
+!
+!                           adams_view_name='ANG_VEL'
+VARIABLE/4
+, IC = 0
+, FUNCTION = varval(5)
+!
+!                        adams_view_name='FUNCTION_MEA_2'
+VARIABLE/5
+, FUNCTION = WX(12, 13, 13)
+!
+!                     adams_view_name='pendulum.ctrl_pinput'
+PINPUT/1
+, VARIABLES = 3
+!
+!                    adams_view_name='pendulum.ctrl_poutput'
+POUTPUT/1
+, VARIABLES = 2, 4
+!
+!------------------------- GRAVITATIONAL ACCELERATION --------------------------
+!
+ACCGRAV/
+, KGRAV = -9806.65
+!
+!----------------------------- ANALYSIS SETTINGS -------------------------------
+!
+OUTPUT/
+, REQSAVE
+, GRSAVE
+!
+RESULTS/
+, XRF
+!
+END
