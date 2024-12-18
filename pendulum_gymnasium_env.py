@@ -12,32 +12,33 @@ def run(is_training=True, render=False):
     epsilon = 1                  # epsilon na začátku
     epsilon_decay_rate = 0.0005  # epsilon decay rate
     epsilon_min = 0.05           # minimum epsilon
-    divisions = 15               # converting continuous observation space to discrete space
+    divisions = 15               # počet segmentů do kterých budou spojité prostory pozorování a akcí rozděleny
 
-    # Divide observation space into discrete segments
+    # Rozdělení spojitých pozorovaní na diskrétní segmenty
     x  = np.linspace(env.observation_space.low[0], env.observation_space.high[0], divisions)
     y  = np.linspace(env.observation_space.low[1], env.observation_space.high[1], divisions)
     w  = np.linspace(env.observation_space.low[2], env.observation_space.high[2], divisions)
 
-    # Divide action space into discrete segments
+    # Rozdělení spojitých akcí na diskrétní segmenty
     a = np.linspace(env.action_space.low[0], env.action_space.high[0], divisions)
 
     if(is_training):
-        # initialize q table to 16x16x16x16 array
+        # inicializace hodnot v q tabulce
         q = np.zeros((len(x)+1, len(y)+1, len(w)+1, len(a)+1))
     else:
         f = open('pendulum.pkl', 'rb')
         q = pickle.load(f)
         f.close()
 
-    best_reward = -99999
-    rewards_per_episode = []     # list to store rewards for each episode
+    best_reward = -99999         
+    rewards_per_episode = []     
     i = 0
+    episodes = 10000
 
-    # for i in range(episodes):
-    while(True):
+    for i in range(episodes):
+    
 
-        state = env.reset()[0]      # Starting position, starting velocity always 0
+        state = env.reset()[0]      # reset prostředí do počáteční pozice
         s_i0  = np.digitize(state[0], x)
         s_i1  = np.digitize(state[1], y)
         s_i2  = np.digitize(state[2], w)
@@ -45,26 +46,26 @@ def run(is_training=True, render=False):
         rewards = 0
         steps = 0
 
-        # Episode
+        # Smyčka jedné epizody
         while(steps < 1000 or is_training==False):
 
             if is_training and np.random.rand() < epsilon:
-                # Choose random action
+                # Náhodný výběr akce
                 action = env.action_space.sample()
                 action_idx = np.digitize(action, a)
             else:
                 action_idx = np.argmax(q[s_i0, s_i1, s_i2, :])
                 action = a[action_idx-1]
 
-            # Take action
+            # Provedení akce v prostředí
             new_state,reward,_,_,_ = env.step([action])
 
-            # Discretize new state
+            # Diskretizace nového stavu
             ns_i0  = np.digitize(new_state[0], x)
             ns_i1  = np.digitize(new_state[1], y)
             ns_i2  = np.digitize(new_state[2], w)
 
-            # Update Q table
+            # Update Q tabulky
             if is_training:
                 q[s_i0, s_i1, s_i2, action_idx] = \
                     q[s_i0, s_i1, s_i2, action_idx] + \
@@ -84,22 +85,21 @@ def run(is_training=True, render=False):
             if rewards>best_reward:
                 best_reward = rewards
 
-                # Save Q table to file on new best reward
+                # Uložení Q tabulky
                 if is_training:
                     f = open('pendulum.pkl','wb')
                     pickle.dump(q, f)
                     f.close()
 
 
-        # Store rewards per episode
         rewards_per_episode.append(rewards)
 
-        # Print stats
+        # Sledování průběhu tréningu
         if is_training and i!=0 and i%100==0:
             mean_reward = np.mean(rewards_per_episode[len(rewards_per_episode)-100:])
             print(f'Episode: {i}, Epsilon: {epsilon:0.2f}, Best Reward: {best_reward}, Mean Rewards {mean_reward:0.1f}')
 
-            # Graph mean rewards
+            # Uložení grafu
             mean_rewards = []
             for t in range(i):
                 mean_rewards.append(np.mean(rewards_per_episode[max(0, t-100):(t+1)]))
@@ -115,13 +115,13 @@ def run(is_training=True, render=False):
         epsilon = max(epsilon - epsilon_decay_rate, epsilon_min)
 
         i+=1
-        # !!!Smyčka běží donekočna, trénování se zastavuje manuálně!!!
+        
         
 
         
 
 
 if __name__ == '__main__':
-    # run(is_training=True, render=False)  #pro tréning agenta
+    #run(is_training=True, render=False)  #pro tréning agenta
 
     run(is_training=False, render=True)  #pro vizualizaci natrenovaného agenta
